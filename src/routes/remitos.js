@@ -13,4 +13,17 @@ router.get('/', (req,res)=> {
     })
 })
 
+router.get('/:nroRemito', (req, res) => {
+    const { nroRemito } = req.params;
+    mysqlConnection.query('SELECT * FROM remito WHERE nroRemito = ?', [nroRemito], (err, rows, fields) => {
+        if(!err){
+            res.json(rows[0]);
+        }else{
+            console.log(err);
+        }
+    });
+});
+
+//router.post()
+
 module.exports = router;
