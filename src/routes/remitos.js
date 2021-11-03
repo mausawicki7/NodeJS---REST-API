@@ -13,6 +13,7 @@ router.get('/', (req,res)=> {
     })
 })
 
+//Método para obtener un registro
 router.get('/:nroRemito', (req, res) => {
     const { nroRemito } = req.params;
     mysqlConnection.query('SELECT * FROM remito WHERE nroRemito = ?', [nroRemito], (err, rows, fields) => {
@@ -24,6 +25,25 @@ router.get('/:nroRemito', (req, res) => {
     });
 });
 
-//router.post()
+//Método para crear un registro
+router.post('/', (req, res) => {
+    const {nroRemito, puntoVenta, sector, descargado} = req.body;
+    const query = `
+        SET @nroRemito = ?;
+        SET @puntoVenta = ?;
+        SET @sector = ?;
+        SET @descargado = ?;
+        CALL remitosAgregarEditar(@nroRemito, @puntoVenta, @sector, @descargado);
+    `;
+    mysqlConnection.query(query, [nroRemito, puntoVenta, sector, descargado], (err, rows, fields) =>{
+        if(!err){
+            res.json({Status: 'Remito guardado'})
+        }else{
+            console.log(err);
+        }
+    });
+
+});
+
 
 module.exports = router;
