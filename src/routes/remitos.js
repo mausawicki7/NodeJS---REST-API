@@ -45,5 +45,25 @@ router.post('/', (req, res) => {
 
 });
 
+//Método para editar un registro
+router.put('/:nroremito', (req, res) => {
+    const { puntoVenta, sector, descargado } = req.body;
+    const { nroremito } = req.params;
+    const query = `
+    SET @nroRemito = ?;
+    SET @puntoVenta = ?;
+    SET @sector = ?;
+    SET @descargado = ?;
+    CALL remitosAgregarEditar(@nroRemito, @puntoVenta, @sector, @descargado);
+    `;
+    mysqlConnection.query(query, [nroRemito, puntoVenta, sector, descargado], (err, rows, fields) => {
+      if(!err) {
+        res.json({status: 'Remito actualizado'});
+      } else {
+        console.log(err);
+      }
+    });
+  });
+
 
 module.exports = router;
