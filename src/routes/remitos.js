@@ -45,16 +45,13 @@ router.post('/', (req, res) => {
 
 //Método para editar/actualizar un registro
 router.put('/:nroRemito', (req, res) => {
-    const { puntoVenta, sector, descargado } = req.body;
-    const { nroRemito } = req.params;
+    const { nroRemito, puntoVenta, sector, descargado } = req.body;
+    const { nroRemitoOld } = req.params;
+    console.log(`remito: ${nroRemito}`);
     const query = `
-        UPDATE remito
-        SET puntoVenta = ?,
-        sector = ?,
-        descargado = ?
-        WHERE nroRemito = ?;
+        UPDATE remito SET nroRemito = ${nroRemito}, puntoVenta = ${puntoVenta}, sector = ${sector}, descargado = ${descargado} WHERE nroRemito = ${nroRemitoOld};
     `;
-    mysqlConnection.query(query, [puntoVenta, sector, descargado, nroRemito], (err, rows, fields) => {
+    mysqlConnection.query(query, [], (err, rows, fields) => {
       if(!err) {
         res.json({status: 'Remito actualizado'});
       } else {
