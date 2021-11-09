@@ -25,15 +25,13 @@ router.get('/:nroRemito', (req, res) => {
     });
 });
 
+
 //Método para crear un registro
 router.post('/', (req, res) => {
     const {nroRemito, puntoVenta, sector, descargado} = req.body;
     const query = `
-        SET @nroRemito = ?;
-        SET @puntoVenta = ?;
-        SET @sector = ?;
-        SET @descargado = ?;
-        CALL remitosAgregarEditar(@nroRemito, @puntoVenta, @sector, @descargado);
+        INSERT INTO remito(nroRemito, puntoVenta, sector, descargado)
+        VALUES (?, ?, ?, ?); 
     `;
     mysqlConnection.query(query, [nroRemito, puntoVenta, sector, descargado], (err, rows, fields) =>{
         if(!err){
@@ -45,18 +43,18 @@ router.post('/', (req, res) => {
 
 });
 
-//Método para editar un registro
-router.put('/:nroremito', (req, res) => {
+//Método para editar/actualizar un registro
+router.put('/:nroRemito', (req, res) => {
     const { puntoVenta, sector, descargado } = req.body;
-    const { nroremito } = req.params;
+    const { nroRemito } = req.params;
     const query = `
-    SET @nroRemito = ?;
-    SET @puntoVenta = ?;
-    SET @sector = ?;
-    SET @descargado = ?;
-    CALL remitosAgregarEditar(@nroRemito, @puntoVenta, @sector, @descargado);
+        UPDATE remito
+        SET puntoVenta = ?,
+        sector = ?,
+        descargado = ?
+        WHERE nroRemito = ?;
     `;
-    mysqlConnection.query(query, [nroRemito, puntoVenta, sector, descargado], (err, rows, fields) => {
+    mysqlConnection.query(query, [puntoVenta, sector, descargado, nroRemito], (err, rows, fields) => {
       if(!err) {
         res.json({status: 'Remito actualizado'});
       } else {
